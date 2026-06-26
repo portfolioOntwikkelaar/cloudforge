@@ -1,0 +1,52 @@
+package middleware
+
+import (
+	"context"
+	"net/http"
+
+	"os"
+	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type contextKey string
+
+const (
+	// ContextKeyUserID is the key used to store the user ID in the request context.
+	UserIDKey contextKey = "userID"
+)
+
+// AuthMiddleware is a middleware that checks for a valid JWT token in the Authorization header.
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		header := r.Header.Get("Authorization")
+
+		if header == "" {
+			http.Error(w, "Authorization header is required", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.TrimPrefix(header, "Bearer ")
+
+		// Parse the token
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			// Validate the algorithm
+			return []byte(os.Getenv("JWT_SECRET")), nil
+		})
+
+		if err != nil || !token.Valid {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		// Extract the user ID from the token claims
+		claims := token.Claims.(jwt.MapClaims)
+
+		userID := uint(claims["user_id"].(float64))
+
+		ctx := context.WithValue(r.Context(), UserIDKey, userID)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

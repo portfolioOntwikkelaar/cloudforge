@@ -9,4 +9,8 @@ type User struct {
 
 	Email    string `gorm:"unique"`
 	Password string
+
+	Role string
+
+	Projects []Project `gorm:"foreignKey:UserID"`
 }

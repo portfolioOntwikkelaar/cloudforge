@@ -1,6 +1,8 @@
 package main
 
 import (
+	"cloudforge/internal/handlers"
+	"cloudforge/internal/middleware"
 	"fmt"
 	"net/http"
 
@@ -23,6 +25,17 @@ func main() {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Cloudforge running")
 	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.Auth)
+		r.Get("/me", handlers.Me)
+	})
+
+	r.Post(
+		"/register",
+		handlers.Register,
+	)
+	r.Post("/login", handlers.Login)
 
 	fmt.Println("Server running on port 8080")
 	http.ListenAndServe(":8080", r)
