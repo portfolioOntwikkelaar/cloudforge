@@ -27,6 +27,7 @@ func main() {
 		fmt.Fprint(w, "Cloudforge running")
 	})
 
+	r.Get("/projects", handlers.GetProjects)
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.Auth)
 		r.Get("/me", handlers.Me)

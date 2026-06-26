@@ -2,7 +2,8 @@ package middleware
 
 import (
 	"context"
-	//"fmt"
+	"fmt"
+
 	"net/http"
 	"os"
 	"strings"
@@ -27,7 +28,7 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 		// fmt.Println("HEADER =", header)
-		tokenString := strings.TrimPrefix(header)
+		tokenString := strings.TrimPrefix(header, "Bearer ")
 
 		// Parse the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -51,7 +52,7 @@ func Auth(next http.Handler) http.Handler {
 		userID := uint(claims["user_id"].(float64))
 
 		ctx := context.WithValue(r.Context(), UserIDKey, userID)
-
+		fmt.Printf("userID=%v (%T)\n", userID, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

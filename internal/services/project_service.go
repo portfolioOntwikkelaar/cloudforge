@@ -16,3 +16,6 @@ func CreateProject(userID uint, req models.CreateProjectRequest) error {
 
 	return repositories.CreateProject(&project)
 }
+func GetProjects(userID uint) ([]models.Project, error) {
+	return repositories.GetProjectsByUserID(userID)
+}
