@@ -1,26 +1,34 @@
 package services
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
-	"time"
+	"path/filepath"
 )
 
-func CloneRepository(gitURL string, targetDir string) error {
-	os.RemoveAll(targetDir)
+const WorkspaceRoot = "/home/damian//go-projects/cloudforge/workspaces"
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
+func CloneRepository(projectID uint, gitURL string) error {
 
-	cmd := exec.CommandContext(ctx, "git", "clone", "--depth", "1", gitURL, targetDir)
+	targetDir := filepath.Join(WorkspaceRoot, fmt.Sprintf("project-%d", projectID))
+	if _, err := os.Stat(targetDir); err == nil {
+		return nil
+
+	}
+
+	if err := os.MkdirAll(targetDir, 0755); err != nil {
+		return err
+
+	}
+	fmt.Println("Cloning repository from", gitURL, "to", targetDir)
+	cmd := exec.Command("git", "clone", gitURL, targetDir)
 
 	output, err := cmd.CombinedOutput()
+	fmt.Println("Git clone output:", string(output))
 	if err != nil {
-		return fmt.Errorf("failed to clone repository: %v, output: %s", err, string(output))
+		return fmt.Errorf("%v\n%s", err, string(output))
 	}
 
 	return nil
-
 }

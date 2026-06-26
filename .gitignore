@@ -1,4 +1,25 @@
+# Runtime workspaces
+workspaces/
+
+# Environment
 .env
+# Build output
 bin/
+dist/
+
 tmp/
+# Logs
 *.log
+
+# IDE
+.vscode/
+
+# Go
+*.exe
+*.test
+*.out
+
+# OS
+.DS_Store
+Thumbs.db
+
