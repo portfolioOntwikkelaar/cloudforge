@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"context"
+	//"fmt"
 	"net/http"
-
 	"os"
 	"strings"
 
@@ -26,8 +26,8 @@ func Auth(next http.Handler) http.Handler {
 			http.Error(w, "Authorization header is required", http.StatusUnauthorized)
 			return
 		}
-
-		tokenString := strings.TrimPrefix(header, "Bearer ")
+		// fmt.Println("HEADER =", header)
+		tokenString := strings.TrimPrefix(header)
 
 		// Parse the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -35,8 +35,13 @@ func Auth(next http.Handler) http.Handler {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 
-		if err != nil || !token.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+		if err != nil {
+			//fmt.Println("JWT parse error:", err)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		if !token.Valid {
+			http.Error(w, " token is not valid", http.StatusUnauthorized)
 			return
 		}
 

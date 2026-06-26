@@ -1,1 +1,16 @@
 package repositories
+
+import (
+	"cloudforge/internal/database"
+	"cloudforge/internal/models"
+)
+
+func CreateProject(project *models.Project) error {
+	return database.DB.Create(project).Error
+}
+
+func GetProjectsByUserID(userID uint) ([]models.Project, error) {
+	var projects []models.Project
+	err := database.DB.Where("user_id = ?", userID).Find(&projects).Error
+	return projects, err
+}

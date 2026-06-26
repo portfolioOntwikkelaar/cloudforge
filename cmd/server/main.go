@@ -5,6 +5,7 @@ import (
 	"cloudforge/internal/middleware"
 	"fmt"
 	"net/http"
+	"os"
 
 	"cloudforge/internal/database"
 
@@ -29,6 +30,7 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.Auth)
 		r.Get("/me", handlers.Me)
+		r.Post("/projects", handlers.CreateProject)
 	})
 
 	r.Post(
@@ -38,5 +40,6 @@ func main() {
 	r.Post("/login", handlers.Login)
 
 	fmt.Println("Server running on port 8080")
+	fmt.Println("JWT_SECRET =", os.Getenv("JWT_SECRET"))
 	http.ListenAndServe(":8080", r)
 }

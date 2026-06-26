@@ -5,9 +5,15 @@ import "gorm.io/gorm"
 type Project struct {
 	gorm.Model
 
-	Name string
+	Name string `gorm:"not null"`
 
-	GitURL string
+	GitURL string `gorm:"not null"`
+
+	Branch string `gorm:"default:main"`
+
+	Description string
+
+	Status string `gorm:"default:created"`
 
 	UserID uint
 }
