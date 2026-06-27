@@ -25,10 +25,15 @@ func CreateProject(userID uint, req models.CreateProjectRequest) error {
 	fmt.Println("Project GitURL:", project.GitURL)
 	if project.GitURL != "" {
 		if err := CloneRepository(project.ID, project.GitURL); err != nil {
-			fmt.Println("failed to clone repository:", err)
+			//fmt.Println("failed to clone repository:", err)
 			return err
 		}
 		fmt.Println("Repository cloned successfully")
+		if err := BuildProject(project.ID); err != nil {
+			//fmt.Println("failed to build project:", err)
+			return err
+		}
+		fmt.Println("Project built successfully")
 	}
 
 	return nil
