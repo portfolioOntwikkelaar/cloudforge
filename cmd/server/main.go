@@ -32,6 +32,8 @@ func main() {
 		r.Get("/me", handlers.Me)
 		r.Post("/projects", handlers.CreateProject)
 		r.Get("/projects", handlers.GetProjects)
+		r.Get("/projects/{projectID}/builds", handlers.GetProjectBuilds)
+		r.Get("/builds/{buildID}", handlers.GetBuild)
 	})
 
 	r.Post(
