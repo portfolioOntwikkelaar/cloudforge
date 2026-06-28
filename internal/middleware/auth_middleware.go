@@ -23,13 +23,13 @@ func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get("Authorization")
 
+		fmt.Println("HEADER =", header)
 		if header == "" {
 			http.Error(w, "Authorization header is required", http.StatusUnauthorized)
 			return
 		}
-		// fmt.Println("HEADER =", header)
 		tokenString := strings.TrimPrefix(header, "Bearer ")
-
+		fmt.Println("TOKEN =", tokenString)
 		// Parse the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Validate the algorithm
